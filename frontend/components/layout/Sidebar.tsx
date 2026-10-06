@@ -118,7 +118,7 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
                   <Link
                     key={item.path}
                     href={item.path}
-                    prefetch={true}
+                    prefetch={false}
                     className={`flex items-center px-3 py-2.5 rounded-lg transition-all text-sm relative group ${
                       isActive
                         ? 'bg-white/10 text-white font-medium'
