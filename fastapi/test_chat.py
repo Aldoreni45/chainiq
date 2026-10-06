@@ -20,7 +20,7 @@ def test_chat(question, role="sales"):
         print("Request failed:", str(e))
 
 if __name__ == "__main__":
-    print("Testing FlowForge ERP AI Copilot Endpoints...")
+    print("Testing ChainIQ ERP AI Copilot Endpoints...")
     
     # 1. Today's Priorities
     test_chat("What should I do today?", role="sales")

@@ -1,5 +1,5 @@
 -- ============================================================
--- FlowForge ERP — Supabase PostgreSQL Schema
+-- ChainIQ ERP — Supabase PostgreSQL Schema
 -- Company: Shiv Furniture Works
 -- Version: 1.0.0
 -- ============================================================

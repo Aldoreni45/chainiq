@@ -86,7 +86,7 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
           </div>
           {isOpen && (
             <div className="overflow-hidden animate-fade-in">
-              <p className="font-bold text-sm text-white leading-tight tracking-wide truncate">FlowForge</p>
+              <p className="font-bold text-sm text-white leading-tight tracking-wide truncate">ChainIQ</p>
               <p className="text-[10px] text-slate-300 truncate">Enterprise ERP</p>
             </div>
           )}

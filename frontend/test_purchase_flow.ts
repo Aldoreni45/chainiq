@@ -47,7 +47,7 @@ async function main() {
       testUser = await prisma.user.create({
         data: {
           name: 'Test Purchase Manager',
-          email: 'test_pm@flowforge.com',
+          email: 'test_pm@chainiq.com',
           passwordHash: 'dummy-hash',
           role: 'purchase',
         },

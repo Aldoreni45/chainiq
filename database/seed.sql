@@ -1,5 +1,5 @@
 -- ============================================================
--- FlowForge ERP — Seed Data
+-- ChainIQ ERP — Seed Data
 -- Company: Shiv Furniture Works
 -- Run AFTER schema.sql
 -- Password for all seed users: Admin@123
