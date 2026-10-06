@@ -12,7 +12,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           {/* Premium Logo Header */}
           <div className="flex items-center gap-2.5 mb-6">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#DD88CF] to-[#4B164C] flex items-center justify-center shadow-sm">
-              <span className="text-white font-black text-sm">FF</span>
+              <span className="text-white font-black text-sm">CQ</span>
             </div>
             <div>
               <h2 className="text-xs font-black text-[#4B164C] tracking-widest uppercase leading-none">ChainIQ</h2>

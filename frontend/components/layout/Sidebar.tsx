@@ -82,7 +82,7 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
       <div className="h-16 flex items-center justify-between px-4 border-b border-white/5 relative">
         <div className={`flex items-center gap-3 w-full ${!isOpen && 'justify-center'}`}>
           <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-accent to-white flex items-center justify-center shrink-0 shadow-md">
-            <span className="text-brand-primary font-bold text-sm">FF</span>
+            <span className="text-brand-primary font-bold text-sm">CQ</span>
           </div>
           {isOpen && (
             <div className="overflow-hidden animate-fade-in">
@@ -118,6 +118,7 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
                   <Link
                     key={item.path}
                     href={item.path}
+                    prefetch={true}
                     className={`flex items-center px-3 py-2.5 rounded-lg transition-all text-sm relative group ${
                       isActive
                         ? 'bg-white/10 text-white font-medium'
