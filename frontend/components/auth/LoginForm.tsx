@@ -46,7 +46,7 @@ export default function LoginForm() {
             {...register('email')}
             type="email"
             className={`input-field ${errors.email ? 'border-rose-500/50 focus:border-rose-500 focus:ring-rose-500/20' : ''}`}
-            placeholder="admin@flowforge.com"
+            placeholder="admin@chainiq.com"
             autoComplete="email"
             disabled={isLoggingIn}
           />

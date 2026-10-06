@@ -43,7 +43,7 @@ export const AiAssistant: React.FC<AiAssistantProps> = ({ isOpen, onClose }) => 
       recommendations: [{ action: 'Approve Pending Purchase RFQs', impact: 'High', reason: 'Prevents safety stockouts across the assembly line.', roles: ['admin', 'purchase'] }],
       procurementInsights: [{ name: 'Wood Screws', sku: 'RM-SC-001', currentStock: 120, consumption: 15, daysRemaining: 8, suggestedOrder: 500, preferredVendor: 'Global Timber Ltd', riskScore: 'High', urgency: 'Medium', reason: 'Projected demand exceeds current inventory.' }],
       manufacturingInsights: [{ moNumber: 'MO-102', product: 'Wooden Chair', delayRisk: '78%', reason: 'Required materials have not arrived.', urgency: 'High' }],
-      executiveSummary: 'Welcome to FlowForge ERP Command Center.'
+      executiveSummary: 'Welcome to ChainIQ ERP Command Center.'
     };
 
     if (pathname.startsWith('/dashboard')) {
@@ -102,7 +102,7 @@ export const AiAssistant: React.FC<AiAssistantProps> = ({ isOpen, onClose }) => 
 
     return {
       title: 'General ERP Insights',
-      summary: data.executiveSummary || 'Welcome to FlowForge ERP Command Center. Select any module to display context-aware optimization insights.',
+      summary: data.executiveSummary || 'Welcome to ChainIQ ERP Command Center. Select any module to display context-aware optimization insights.',
       recommendations: (data.recommendations || []).map((r: any) => ({ text: r.action, savings: r.reason })).slice(0, 2),
       alerts: []
     };
@@ -188,7 +188,7 @@ export const AiAssistant: React.FC<AiAssistantProps> = ({ isOpen, onClose }) => 
         <div className="p-4 bg-gradient-brand text-white flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-2">
             <Sparkles size={18} className="text-brand-accent animate-pulse" />
-            <h2 className="font-bold text-sm tracking-wider uppercase">FlowForge Copilot</h2>
+            <h2 className="font-bold text-sm tracking-wider uppercase">ChainIQ Copilot</h2>
           </div>
           <button
             onClick={onClose}

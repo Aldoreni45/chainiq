@@ -12,10 +12,10 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           {/* Premium Logo Header */}
           <div className="flex items-center gap-2.5 mb-6">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#DD88CF] to-[#4B164C] flex items-center justify-center shadow-sm">
-              <span className="text-white font-black text-sm">FF</span>
+              <span className="text-white font-black text-sm">CQ</span>
             </div>
             <div>
-              <h2 className="text-xs font-black text-[#4B164C] tracking-widest uppercase leading-none">FlowForge</h2>
+              <h2 className="text-xs font-black text-[#4B164C] tracking-widest uppercase leading-none">ChainIQ</h2>
               <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 leading-none">Enterprise OS</p>
             </div>
           </div>
@@ -53,7 +53,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
               <span className="text-[#DD88CF] bg-gradient-to-r from-[#DD88CF] to-purple-300 bg-clip-text text-transparent">Operating System</span>
             </h1>
             <p className="text-xs text-slate-300 font-medium max-w-md leading-relaxed">
-              Every department works as one. FlowForge automatically orchestrates Sales, Procurement, Inventory, and Production through real-time workflow telemetry.
+              Every department works as one. ChainIQ automatically orchestrates Sales, Procurement, Inventory, and Production through real-time workflow telemetry.
             </p>
           </div>
 

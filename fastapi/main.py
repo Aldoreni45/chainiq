@@ -6,7 +6,7 @@ import requests
 
 WEBHOOK_URL = "https://api.agents.snsihub.ai/webhook-test/ffe27c5a-f302-478f-8c6e-723ddae680c8"
 
-app = FastAPI(title="FlowForge ERP AI Copilot", version="1.0.0")
+app = FastAPI(title="ChainIQ ERP AI Copilot", version="1.0.0")
 
 # Enable CORS
 app.add_middleware(
@@ -117,7 +117,7 @@ async def insights_endpoint(request: InsightsRequest):
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
-    return {"status": "ok", "message": "FlowForge ERP FastAPI Copilot is running."}
+    return {"status": "ok", "message": "ChainIQ ERP FastAPI Copilot is running."}
 
 if __name__ == "__main__":
     import uvicorn

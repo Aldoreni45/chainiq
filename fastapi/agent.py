@@ -51,7 +51,7 @@ def tool_selector(state: ERPState):
     role = state.get("role", "guest").lower()
     authorized_tool_names = get_authorized_tools(role)
     
-    prompt = f"""You are FlowForge ERP AI.
+    prompt = f"""You are ChainIQ ERP AI.
 Available Tools for the user's role '{role}':
 {", ".join(authorized_tool_names)}
 
@@ -99,7 +99,7 @@ def response_generator(state: ERPState):
     if state.get("validation_error"):
         return {"answer": state["validation_error"]}
         
-    prompt = f"""You are FlowForge ERP Copilot.
+    prompt = f"""You are ChainIQ ERP Copilot.
 
 Question:
 {state['question']}
