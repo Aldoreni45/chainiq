@@ -16,7 +16,11 @@ export async function handleRoute(
     const statusCode = error.statusCode ?? 500;
     const message = error.message ?? 'Internal Server Error';
 
-    console.error(`[Error] ${statusCode} - ${message}`, error.stack);
+    if (statusCode >= 500) {
+      console.error(`[Server Error] ${statusCode} - ${message}`, error.stack);
+    } else {
+      console.warn(`[Client ${statusCode}] ${message}`);
+    }
 
     return jsonError(
       message,

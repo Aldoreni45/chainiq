@@ -26,7 +26,7 @@ export class AIEngineService {
       insights = await this.queryFastAPIAgent(context, role);
       console.log(`[AIEngineService] Successfully generated insights using FastAPI Agent for role: ${role}`);
     } catch (err: any) {
-      console.warn(`[AIEngineService] FastAPI Agent failed, falling back to local business logic:`, err.message);
+      console.info(`[AIEngineService] FastAPI Agent offline (${err.message}), utilizing built-in intelligence engine`);
       insights = this.generateLocalFallback(context);
     }
 

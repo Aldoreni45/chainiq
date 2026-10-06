@@ -5,10 +5,11 @@ import toast from 'react-hot-toast';
 export const useManufacturing = () => {
   const queryClient = useQueryClient();
 
-  const useList = () => {
+  const useList = (options?: { enabled?: boolean }) => {
     return useQuery({
       queryKey: ['manufacturing-orders'],
       queryFn: () => manufacturingApi.list(),
+      enabled: options?.enabled,
     });
   };
 
@@ -22,11 +23,15 @@ export const useManufacturing = () => {
 
   const createMutation = useMutation({
     mutationFn: manufacturingApi.createFromSo,
-    onSuccess: () => {
+    onSuccess: (_data, vars) => {
       toast.success('Production request raised successfully!');
       queryClient.invalidateQueries({ queryKey: ['manufacturing-orders'] });
       queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
       queryClient.invalidateQueries({ queryKey: ['sales-orders'] });
+      queryClient.invalidateQueries({ queryKey: ['sales-order'] });
+      if (vars?.salesOrderId) {
+        queryClient.invalidateQueries({ queryKey: ['sales-order', vars.salesOrderId] });
+      }
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || 'Failed to request production');

@@ -383,6 +383,8 @@ export default function SalesOrderDetailPage() {
   };
 
   const timelineSteps = buildBusinessTimeline();
+  const orderMos = (order as any).manufacturingOrders || [];
+  const hasActiveMo = orderMos.some((m: any) => m.status !== 'cancelled');
 
   return (
     <div className="space-y-6">
@@ -414,14 +416,25 @@ export default function SalesOrderDetailPage() {
 
         <div className="flex items-center gap-2">
           {order.status === 'shortage_detected' && (userRole === 'sales' || userRole === 'admin') && (
-            <Button 
-              type="button" 
-              className="bg-[#4B164C] hover:bg-[#4b164c]/90 border-0" 
-              onClick={handleRequestProduction} 
-              isLoading={isRequestingProduction}
-            >
-              Request Production
-            </Button>
+            hasActiveMo ? (
+              <Link 
+                href="/manufacturing" 
+                className="btn-secondary text-xs font-semibold flex items-center gap-1.5 py-2 px-3 bg-white border border-surface-border text-brand-primary rounded-xl hover:bg-surface-hover transition-colors shadow-sm"
+              >
+                <CheckCircle size={14} className="text-emerald-500" />
+                Production Requested
+              </Link>
+            ) : (
+              <Button 
+                type="button" 
+                className="bg-[#4B164C] hover:bg-[#4b164c]/90 border-0" 
+                onClick={handleRequestProduction} 
+                isLoading={isRequestingProduction}
+                disabled={isRequestingProduction}
+              >
+                Request Production
+              </Button>
+            )
           )}
           {(order.status === 'draft' || order.status === 'shortage_detected') && (
             <Button type="button" onClick={handleConfirmAction} isLoading={isConfirming}>
