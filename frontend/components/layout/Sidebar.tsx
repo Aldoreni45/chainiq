@@ -19,6 +19,17 @@ import {
   Clock,
   Target,
   Settings,
+  Radar,
+  ShieldCheck,
+  ArrowLeftRight,
+  UserPlus,
+  Layers,
+  Radio,
+  Network,
+  SlidersHorizontal,
+  FileCheck,
+  Bell,
+  LineChart,
 } from 'lucide-react';
 
 const SECTIONS = [
@@ -44,6 +55,23 @@ const SECTIONS = [
       { name: 'Vendor Directory', path: '/vendors', icon: Users, roles: ['admin', 'purchase'] },
       { name: 'Inventory', path: '/inventory', icon: Warehouse, roles: ['admin', 'inventory'] },
       { name: 'Stock Ledger', path: '/inventory/ledger', icon: BookOpen, roles: ['admin', 'inventory'] },
+    ]
+  },
+  {
+    title: 'Supply Chain Intelligence',
+    items: [
+      { name: 'Overview', path: '/onchain-insights', icon: Radar, roles: ['admin', 'purchase'] },
+      { name: 'Disruptions & Shipments', path: '/onchain-insights/disruptions', icon: Radio, roles: ['admin', 'purchase', 'inventory'] },
+      { name: 'Supplier Qualification', path: '/onchain-insights/suppliers', icon: ShieldCheck, roles: ['admin', 'purchase'] },
+      { name: 'Onboarding & Review', path: '/onchain-insights/suppliers/onboard/queue', icon: UserPlus, roles: ['admin', 'purchase'] },
+      { name: 'Switching Simulator', path: '/onchain-insights/supplier-switch', icon: ArrowLeftRight, roles: ['admin', 'purchase'] },
+      { name: 'SKU Transition Planning', path: '/onchain-insights/sku-transition', icon: Layers, roles: ['admin', 'purchase'] },
+      { name: 'Risk Prioritization', path: '/onchain-insights/risk-assessment', icon: ShieldAlert, roles: ['admin', 'purchase'] },
+      { name: 'Dependency Explorer', path: '/onchain-insights/dependencies', icon: Network, roles: ['admin', 'purchase', 'product_manager'] },
+      { name: 'Mitigation Scenario Lab', path: '/onchain-insights/mitigation', icon: SlidersHorizontal, roles: ['admin', 'purchase', 'product_manager'] },
+      { name: 'Decision & Approvals', path: '/onchain-insights/approvals', icon: FileCheck, roles: ['admin', 'purchase'] },
+      { name: 'Alerts & Notifications', path: '/onchain-insights/notifications', icon: Bell, roles: ['admin', 'purchase', 'sales', 'product_manager', 'inventory'] },
+      { name: 'Outcome Analytics', path: '/onchain-insights/analytics', icon: LineChart, roles: ['admin', 'purchase', 'product_manager'] },
     ]
   },
   {
@@ -112,7 +140,9 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
             )}
             <div className="space-y-0.5">
               {section.items.map((item) => {
-                const isActive = pathname.startsWith(item.path);
+                const isActive = item.path === '/onchain-insights' || item.path === '/inventory' || item.path === '/dashboard'
+                  ? pathname === item.path
+                  : pathname.startsWith(item.path);
                 const Icon = item.icon;
                 return (
                   <Link

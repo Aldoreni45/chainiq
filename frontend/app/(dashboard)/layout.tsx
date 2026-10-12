@@ -41,6 +41,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     if (pathname.startsWith('/procurement')) {
       return userRole === 'purchase' || userRole === 'inventory';
     }
+    if (pathname.startsWith('/onchain-insights')) {
+      return ['purchase', 'product_manager', 'inventory', 'sales'].includes(userRole);
+    }
     if (pathname.startsWith('/vendors')) {
       return userRole === 'purchase';
     }
