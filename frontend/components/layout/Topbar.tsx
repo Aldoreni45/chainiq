@@ -24,7 +24,7 @@ export default function Topbar({
   const [showNotificationsMenu, setShowNotificationsMenu] = useState(false);
 
   const { useNotifications, useUpdateNotificationStatus } = useOnchainInsights();
-  const { data: notificationsData } = useNotifications();
+  const { data: notificationsData } = useNotifications(undefined, { enabled: Boolean(user) });
   const updateStatusMutation = useUpdateNotificationStatus();
 
   const unreadCount = notificationsData?.unreadCount ?? 0;

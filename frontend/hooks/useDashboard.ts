@@ -6,7 +6,7 @@ export const useDashboard = () => {
     return useQuery({
       queryKey: ['dashboardStats'],
       queryFn: () => dashboardApi.getStats(),
-      refetchInterval: 10000, // Refetch every 10s
+      staleTime: 5 * 60 * 1000,
     });
   };
 

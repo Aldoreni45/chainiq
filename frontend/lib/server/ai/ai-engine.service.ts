@@ -7,6 +7,8 @@ interface CacheEntry {
 
 let cachedInsights: Record<string, CacheEntry> = {};
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+let lastFastAPIFailureTime = 0;
+const FASTAPI_COOLDOWN = 60 * 1000; // 60s cooldown if FastAPI is offline
 
 export class AIEngineService {
   async getInsights(bypassCache = false, role = 'admin') {
@@ -22,12 +24,17 @@ export class AIEngineService {
     const context = await aiContextService.getLiveContext();
 
     let insights: any;
-    try {
-      insights = await this.queryFastAPIAgent(context, role);
-      console.log(`[AIEngineService] Successfully generated insights using FastAPI Agent for role: ${role}`);
-    } catch (err: any) {
-      console.warn(`[AIEngineService] FastAPI Agent failed, falling back to local business logic:`, err.message);
+    if (now - lastFastAPIFailureTime < FASTAPI_COOLDOWN) {
       insights = this.generateLocalFallback(context);
+    } else {
+      try {
+        insights = await this.queryFastAPIAgent(context, role);
+        console.log(`[AIEngineService] Successfully generated insights using FastAPI Agent for role: ${role}`);
+      } catch (err: any) {
+        lastFastAPIFailureTime = Date.now();
+        console.warn(`[AIEngineService] FastAPI Agent offline/failed, falling back to local business logic:`, err.message);
+        insights = this.generateLocalFallback(context);
+      }
     }
 
     cachedInsights[cacheKey] = {

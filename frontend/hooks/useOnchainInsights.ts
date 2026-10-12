@@ -235,11 +235,12 @@ export const useOnchainInsights = () => {
   };
 
   // --- Task 11: Stakeholder Alerts & Notification Center Hooks ---
-  const useNotifications = (filters?: NotificationFilterParams) => {
+  const useNotifications = (filters?: NotificationFilterParams, options?: { enabled?: boolean }) => {
     return useQuery({
       queryKey: ['onchainNotifications', filters],
       queryFn: () => onchainInsightsApi.getNotifications(filters),
       staleTime: CACHE_TIME,
+      enabled: options?.enabled !== undefined ? options.enabled : true,
     });
   };
 
