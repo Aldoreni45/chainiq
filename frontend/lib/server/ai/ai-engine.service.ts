@@ -25,6 +25,11 @@ export class AIEngineService {
 
     let insights: any;
     if (now - lastFastAPIFailureTime < FASTAPI_COOLDOWN) {
+    try {
+      insights = await this.queryFastAPIAgent(context, role);
+      console.log(`[AIEngineService] Successfully generated insights using FastAPI Agent for role: ${role}`);
+    } catch (err: any) {
+      console.info(`[AIEngineService] FastAPI Agent offline (${err.message}), utilizing built-in intelligence engine`);
       insights = this.generateLocalFallback(context);
     } else {
       try {

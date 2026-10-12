@@ -25,7 +25,7 @@ export async function requireRole(...roles: string[]): Promise<JwtPayload | Next
   }
 
   if (!roles.includes(result.role)) {
-    console.log('[DEBUG] Insufficient permissions. Required:', roles, 'User role:', result.role);
+    console.warn(`[Auth 403] Role '${result.role}' lacks required permissions: [${roles.join(', ')}]`);
     return jsonError('Insufficient permissions', 403);
   }
 

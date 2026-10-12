@@ -17,15 +17,19 @@ export default function ActionCenterPage() {
   const { user } = useAuth();
   const userRole = user?.role || 'sales';
 
+  const canViewSales = ['admin', 'sales'].includes(userRole);
+  const canViewMos = ['admin', 'product_manager'].includes(userRole);
+  const canViewPos = ['admin', 'purchase', 'inventory'].includes(userRole);
+
   const { useList: useSalesList } = useSales();
   const { useList: useMoList } = useManufacturing();
   const { useList: usePoList } = usePurchase();
 
-  const { data: sales, isLoading: salesLoading } = useSalesList();
-  const { data: mos, isLoading: mosLoading } = useMoList();
-  const { data: pos, isLoading: posLoading } = usePoList();
+  const { data: sales, isLoading: salesLoading } = useSalesList({ enabled: canViewSales });
+  const { data: mos, isLoading: mosLoading } = useMoList({ enabled: canViewMos });
+  const { data: pos, isLoading: posLoading } = usePoList({ enabled: canViewPos });
 
-  const isLoading = salesLoading || mosLoading || posLoading;
+  const isLoading = (canViewSales && salesLoading) || (canViewMos && mosLoading) || (canViewPos && posLoading);
 
   if (isLoading) {
     return (

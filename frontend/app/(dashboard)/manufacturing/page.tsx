@@ -27,6 +27,7 @@ export default function ManufacturingPage() {
 
   const [machineSelection, setMachineSelection] = useState('Machine CNC-A');
   const [showStartModal, setShowStartModal] = useState(false);
+  const [approvingId, setApprovingId] = useState<string | null>(null);
 
   // Expanded Rows State — auto-expand the first draft order so PM sees BOM immediately
   const [expandedMoId, setExpandedMoId] = useState<string | null>(null);
@@ -79,9 +80,12 @@ export default function ManufacturingPage() {
 
   const handleApprove = async (id: string) => {
     try {
+      setApprovingId(id);
       await approve(id);
     } catch {
       // Toast handles error
+    } finally {
+      setApprovingId(null);
     }
   };
 
@@ -274,7 +278,8 @@ export default function ManufacturingPage() {
                                 <Button 
                                   className="bg-emerald-600 hover:bg-emerald-700 border-0 text-white font-semibold py-1 px-2.5 h-8 flex items-center gap-1"
                                   onClick={() => handleApprove(mo.id)}
-                                  isLoading={isApproving}
+                                  isLoading={isApproving && approvingId === mo.id}
+                                  disabled={isApproving}
                                 >
                                   <Check size={14} /> Approve
                                 </Button>

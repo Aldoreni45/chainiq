@@ -5,10 +5,11 @@ import toast from 'react-hot-toast';
 export const useSales = () => {
   const queryClient = useQueryClient();
 
-  const useList = () => {
+  const useList = (options?: { enabled?: boolean }) => {
     return useQuery({
       queryKey: ['sales-orders'],
       queryFn: () => salesApi.list(),
+      enabled: options?.enabled,
     });
   };
 

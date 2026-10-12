@@ -182,6 +182,9 @@ export class ManufacturingService {
     if (!existing) {
       throw Object.assign(new Error('Manufacturing Order not found'), { statusCode: 404 });
     }
+    if (existing.status === 'confirmed') {
+      return mapMOStatus(existing);
+    }
     if (existing.status !== 'draft') {
       throw Object.assign(new Error('Only draft manufacturing orders can be approved'), { statusCode: 400 });
     }
