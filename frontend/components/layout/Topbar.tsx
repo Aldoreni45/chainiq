@@ -1,9 +1,11 @@
 'use client';
 
 import { useAuth } from '@/hooks/useAuth';
-import { Menu, Bell, Search, LogOut, User, Sparkles, ChevronDown, Plus } from 'lucide-react';
+import { Menu, Bell, Search, LogOut, User, Sparkles, ChevronDown, Plus, CheckCheck, ExternalLink, AlertTriangle, ArrowRight } from 'lucide-react';
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useOnchainInsights } from '@/hooks/useOnchainInsights';
+import { NOTIFICATION_CATEGORY_CONFIG } from '@/types/onchain-insights';
 
 export default function Topbar({
   sidebarOpen,
@@ -19,6 +21,14 @@ export default function Topbar({
   const { logout, isLoggingOut, user, login } = useAuth();
   const [showWorkspaceMenu, setShowWorkspaceMenu] = useState(false);
   const [showRoleMenu, setShowRoleMenu] = useState(false);
+  const [showNotificationsMenu, setShowNotificationsMenu] = useState(false);
+
+  const { useNotifications, useUpdateNotificationStatus } = useOnchainInsights();
+  const { data: notificationsData } = useNotifications(undefined, { enabled: Boolean(user) });
+  const updateStatusMutation = useUpdateNotificationStatus();
+
+  const unreadCount = notificationsData?.unreadCount ?? 0;
+  const recentNotifications = (notificationsData?.data || []).slice(0, 4);
 
   const rolesList = [
     { name: 'Super Admin',      email: 'admin@shivfurniture.com',  role: 'admin' },
@@ -159,11 +169,110 @@ export default function Topbar({
           <span className="hidden sm:inline">AI Insights</span>
         </button>
 
-        {/* Notifications */}
-        <button className="relative p-1.5 text-text-secondary hover:text-brand-primary rounded-lg hover:bg-surface-hover/30 transition-all">
-          <Bell size={18} />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 border-2 border-white rounded-full animate-pulse" />
-        </button>
+        {/* Notifications & Flyout */}
+        <div className="relative">
+          <button
+            onClick={() => setShowNotificationsMenu(!showNotificationsMenu)}
+            className="relative p-1.5 text-text-secondary hover:text-brand-primary rounded-lg hover:bg-surface-hover/30 transition-all"
+            title="Stakeholder Alerts & Notification Center"
+          >
+            <Bell size={18} />
+            {unreadCount > 0 ? (
+              <span className="absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 text-[9px] font-bold text-white bg-rose-600 rounded-full flex items-center justify-center animate-pulse shadow-xs">
+                {unreadCount}
+              </span>
+            ) : null}
+          </button>
+
+          {showNotificationsMenu && (
+            <>
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setShowNotificationsMenu(false)}
+              />
+              <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white border border-surface-border rounded-2xl shadow-xl z-50 overflow-hidden animate-fade-in text-xs">
+                {/* Header */}
+                <div className="p-3.5 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <Bell size={14} className="text-[#4B164C]" />
+                    <span className="font-bold text-text-primary text-xs">Supply Chain Alerts</span>
+                    {unreadCount > 0 && (
+                      <span className="px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-rose-100 text-rose-800 font-mono">
+                        {unreadCount} New
+                      </span>
+                    )}
+                  </div>
+                  {unreadCount > 0 && (
+                    <button
+                      onClick={() => updateStatusMutation.mutate({ action: 'mark_all_read' })}
+                      className="text-[10px] text-[#4B164C] hover:underline font-bold flex items-center gap-1"
+                    >
+                      <CheckCheck size={12} /> Mark all read
+                    </button>
+                  )}
+                </div>
+
+                {/* Notification Items Preview */}
+                <div className="divide-y divide-slate-100 max-h-80 overflow-y-auto">
+                  {recentNotifications.length === 0 ? (
+                    <div className="p-6 text-center text-text-muted">
+                      No recent supply chain alerts.
+                    </div>
+                  ) : (
+                    recentNotifications.map((notif) => {
+                      const cfg = NOTIFICATION_CATEGORY_CONFIG[notif.category] || NOTIFICATION_CATEGORY_CONFIG.risk_alert;
+                      return (
+                        <Link
+                          key={notif.id}
+                          href={notif.targetUrl}
+                          onClick={() => {
+                            setShowNotificationsMenu(false);
+                            if (!notif.isRead) {
+                              updateStatusMutation.mutate({
+                                action: 'mark_as_read',
+                                notificationIds: [notif.id],
+                              });
+                            }
+                          }}
+                          className={`block p-3 hover:bg-slate-50/80 transition-colors ${
+                            !notif.isRead ? 'bg-purple-50/20' : ''
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded-full uppercase ${cfg.bg} ${cfg.color}`}>
+                              {cfg.label}
+                            </span>
+                            <span className="text-[9px] text-text-muted font-mono">
+                              {new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          </div>
+                          <p className={`mt-1 font-bold leading-tight ${!notif.isRead ? 'text-[#4B164C]' : 'text-text-primary'}`}>
+                            {notif.title}
+                          </p>
+                          <p className="mt-0.5 text-[11px] text-text-secondary line-clamp-1">
+                            {notif.message}
+                          </p>
+                        </Link>
+                      );
+                    })
+                  )}
+                </div>
+
+                {/* Footer Link */}
+                <div className="p-2.5 bg-slate-50 border-t border-slate-100 text-center">
+                  <Link
+                    href="/onchain-insights/notifications"
+                    onClick={() => setShowNotificationsMenu(false)}
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-[#4B164C] hover:underline"
+                  >
+                    <span>View All Notifications & History</span>
+                    <ArrowRight size={11} />
+                  </Link>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
 
         <div className="h-6 w-px bg-surface-border" />
 

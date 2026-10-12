@@ -7,6 +7,8 @@ interface CacheEntry {
 
 let cachedInsights: Record<string, CacheEntry> = {};
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+let lastFastAPIFailureTime = 0;
+const FASTAPI_COOLDOWN = 60 * 1000; // 60s cooldown if FastAPI is offline
 
 export class AIEngineService {
   async getInsights(bypassCache = false, role = 'admin') {
@@ -22,12 +24,22 @@ export class AIEngineService {
     const context = await aiContextService.getLiveContext();
 
     let insights: any;
+    if (now - lastFastAPIFailureTime < FASTAPI_COOLDOWN) {
     try {
       insights = await this.queryFastAPIAgent(context, role);
       console.log(`[AIEngineService] Successfully generated insights using FastAPI Agent for role: ${role}`);
     } catch (err: any) {
       console.info(`[AIEngineService] FastAPI Agent offline (${err.message}), utilizing built-in intelligence engine`);
       insights = this.generateLocalFallback(context);
+    } else {
+      try {
+        insights = await this.queryFastAPIAgent(context, role);
+        console.log(`[AIEngineService] Successfully generated insights using FastAPI Agent for role: ${role}`);
+      } catch (err: any) {
+        lastFastAPIFailureTime = Date.now();
+        console.warn(`[AIEngineService] FastAPI Agent offline/failed, falling back to local business logic:`, err.message);
+        insights = this.generateLocalFallback(context);
+      }
     }
 
     cachedInsights[cacheKey] = {
@@ -40,37 +52,48 @@ export class AIEngineService {
 
   private async queryFastAPIAgent(context: any, role: string) {
     const fastapiUrl = process.env.FASTAPI_URL || 'http://localhost:8000';
-    const response = await fetch(`${fastapiUrl}/api/insights`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        role,
-        context,
-      }),
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 600); // 600ms max timeout if FastAPI offline
 
-    if (!response.ok) {
-      throw new Error(`FastAPI agent returned status ${response.status}`);
+    try {
+      const response = await fetch(`${fastapiUrl}/api/insights`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          role,
+          context,
+        }),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`FastAPI agent returned status ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Validate that the response has the required structure
+      const requiredFields = ['operationalHealthScore', 'criticalRisks', 'recommendations', 'procurementInsights', 'manufacturingInsights'];
+      const isValid = requiredFields.every(field => data[field] !== undefined);
+      if (!isValid) {
+        throw new Error('FastAPI agent returned invalid insights structure, falling back to local logic');
+      }
+
+      // Ensure all array fields are actually arrays
+      data.criticalRisks = Array.isArray(data.criticalRisks) ? data.criticalRisks : [];
+      data.recommendations = Array.isArray(data.recommendations) ? data.recommendations : [];
+      data.procurementInsights = Array.isArray(data.procurementInsights) ? data.procurementInsights : [];
+      data.manufacturingInsights = Array.isArray(data.manufacturingInsights) ? data.manufacturingInsights : [];
+
+      return data;
+    } catch (err) {
+      clearTimeout(timeoutId);
+      throw err;
     }
-
-    const data = await response.json();
-
-    // Validate that the response has the required structure
-    const requiredFields = ['operationalHealthScore', 'criticalRisks', 'recommendations', 'procurementInsights', 'manufacturingInsights'];
-    const isValid = requiredFields.every(field => data[field] !== undefined);
-    if (!isValid) {
-      throw new Error('FastAPI agent returned invalid insights structure, falling back to local logic');
-    }
-
-    // Ensure all array fields are actually arrays
-    data.criticalRisks = Array.isArray(data.criticalRisks) ? data.criticalRisks : [];
-    data.recommendations = Array.isArray(data.recommendations) ? data.recommendations : [];
-    data.procurementInsights = Array.isArray(data.procurementInsights) ? data.procurementInsights : [];
-    data.manufacturingInsights = Array.isArray(data.manufacturingInsights) ? data.manufacturingInsights : [];
-
-    return data;
   }
 
 

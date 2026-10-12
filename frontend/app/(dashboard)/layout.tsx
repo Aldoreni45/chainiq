@@ -41,6 +41,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     if (pathname.startsWith('/procurement')) {
       return userRole === 'purchase' || userRole === 'inventory';
     }
+    if (pathname.startsWith('/onchain-insights')) {
+      return ['purchase', 'product_manager', 'inventory', 'sales'].includes(userRole);
+    }
     if (pathname.startsWith('/vendors')) {
       return userRole === 'purchase';
     }
@@ -55,7 +58,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const authorized = isAuthorized();
 
-  if (!_hasHydrated || isLoading || !isAuthenticated) {
+  if (!_hasHydrated || (!user && isLoading) || !isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F5F5F5]">
         <Loader2 className="animate-spin text-[#4B164C]" size={40} />
